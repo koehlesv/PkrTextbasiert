@@ -1,0 +1,18 @@
+program Pkr;
+
+uses
+  FastMM4,
+  Vcl.Forms,
+  MainFrm in 'MainFrm.pas' {frmMain},
+  KartenAnzeigenFrm in 'KartenAnzeigenFrm.pas' {frmKartenAnzeigen},
+  SpieldatenFestlegenFrm in 'SpieldatenFestlegenFrm.pas' {frmSpieldatenFestlegen},
+  KartenTauschenFrm in 'KartenTauschenFrm.pas' {frmKartenTauschen};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmMain, frmMain);
+  Application.Run;
+end.
