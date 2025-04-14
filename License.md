@@ -3,19 +3,25 @@ Diese Software (dies gilt für alle Bestandteile der Software, unter anderem die
 Die folgenden Bestimmungen ergänzen die Apache License 2.0 und gelten für alle Original- und abgeleiteten Werke, auch bei teilweiser Ableitung, die auf dieser Software basieren (nachfolgend "Software").
 
 Zufallsgenerator-Integritätsklausel
+
 a) Der in der Software implementierte Zufallsgenerator muss in jeder Ausführung gleichverteilt zufällige Ergebnisse liefern. Dies gilt als erfüllt, sofern die Funktion zur Erzeugung der Zufallszahlen des Originals unverändert übernommen wird.
+
 b) Es ist untersagt, den Code des Zufallsgenerators in einer Weise zu modifizieren, die zu einer systematischen Verzerrung führt – das heißt, es dürfen keine Änderungen vorgenommen werden, die einzelne Nutzende bevorzugen oder benachteiligen.
 
 Verpflichtung zur Offenlegung
+
 a) Jegliche Änderungen am Code des Zufallsgenerators müssen in den entsprechenden Versionshinweisen dokumentiert werden.
+
 b) Sollte nachgewiesen werden, dass Änderungen zu einer ungleichverteilten Zufallsfunktion führen, behält sich der ursprüngliche Urheber das Recht vor, sämtliche Lizenzrechte in Bezug auf das betroffene Werk auszuüben.
 
 Warnhinweis-Pflicht
+
 a) Jede Software, die auf dieser Software basiert, diese integriert oder ganz- oder teilweise davon ableitet (nachfolgend „abgeleitete Werke“), muss in der Benutzerschnittstelle permanent und an einer gut sichtbaren Stelle einen Warnhinweis anzeigen. Dieser Warnhinweis muss inhaltlich mindestens Folgendes beinhalten:
 > "Poker ist ein rundenbasiertes Spiel, bei welchem der Erfolg in hohem Maße vom Zufall abhängt. Mit diesem Programm darf nicht um Geld oder andere Wertgegenstände gespielt werden.
 Glücksbasiertes Spielen kann süchtig machen; Infos unter https://www.buwei.de - kostenfrei und anonym."
 > 
 b) Der angezeigte Warnhinweis darf in keiner Weise durch Modifikation, Unterdrückung oder sonstige Änderungen verändert, deaktiviert oder entfernt werden. Jede Abweichung von dieser Bedingung bedarf der ausdrücklichen schriftlichen Zustimmung des ursprünglichen Urhebers.
+
 c) Diese zusätzliche Warnhinweis-Pflicht gilt für alle abgeleiteten Werke, unabhängig davon, in welchem Umfang sie die ursprüngliche Software nutzen oder erweitern. Die Anzeigepflicht erstreckt sich auf jede Oberfläche, in der der Nutzer mit der Software interagiert, und muss dauerhaft bestehen, solange das abgeleitete Werk in Betrieb ist.
 
 Jede abgeleitete Software muss diesen Lizenztext enthalten.
