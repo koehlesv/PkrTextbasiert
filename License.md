@@ -14,6 +14,7 @@ Warnhinweis-Pflicht
 a) Jede Software, die auf dieser Software basiert, diese integriert oder ganz- oder teilweise davon ableitet (nachfolgend „abgeleitete Werke“), muss in der Benutzerschnittstelle permanent und an einer gut sichtbaren Stelle einen Warnhinweis anzeigen. Dieser Warnhinweis muss inhaltlich mindestens Folgendes beinhalten:
 > "Poker ist ein rundenbasiertes Spiel, bei welchem der Erfolg in hohem Maße vom Zufall abhängt. Mit diesem Programm darf nicht um Geld oder andere Wertgegenstände gespielt werden.
 Glücksbasiertes Spielen kann süchtig machen; Infos unter https://www.buwei.de - kostenfrei und anonym."
+> 
 b) Der angezeigte Warnhinweis darf in keiner Weise durch Modifikation, Unterdrückung oder sonstige Änderungen verändert, deaktiviert oder entfernt werden. Jede Abweichung von dieser Bedingung bedarf der ausdrücklichen schriftlichen Zustimmung des ursprünglichen Urhebers.
 c) Diese zusätzliche Warnhinweis-Pflicht gilt für alle abgeleiteten Werke, unabhängig davon, in welchem Umfang sie die ursprüngliche Software nutzen oder erweitern. Die Anzeigepflicht erstreckt sich auf jede Oberfläche, in der der Nutzer mit der Software interagiert, und muss dauerhaft bestehen, solange das abgeleitete Werk in Betrieb ist.
 
