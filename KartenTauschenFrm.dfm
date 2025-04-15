@@ -15,7 +15,7 @@ object frmKartenTauschen: TfrmKartenTauschen
   object lblErkl: TLabel
     Left = 31
     Top = 32
-    Width = 634
+    Width = 624
     Height = 30
     Caption = 
       'Es k'#246'nnen 0-5 Karten getauscht werden - f'#252'r diese Karten werden ' +
@@ -104,41 +104,41 @@ object frmKartenTauschen: TfrmKartenTauschen
     Height = 25
     Caption = '&Tauschen bzw. Fortsetzen'
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 6
   end
   object cbTauschen1: TCheckBox
     Left = 141
     Top = 152
     Width = 20
     Height = 17
-    TabOrder = 2
+    TabOrder = 1
   end
   object cbTauschen2: TCheckBox
     Left = 218
     Top = 152
     Width = 20
     Height = 17
-    TabOrder = 3
+    TabOrder = 2
   end
   object cbTauschen3: TCheckBox
     Left = 295
     Top = 152
     Width = 20
     Height = 17
-    TabOrder = 4
+    TabOrder = 3
   end
   object cbTauschen4: TCheckBox
     Left = 372
     Top = 152
     Width = 20
     Height = 17
-    TabOrder = 5
+    TabOrder = 4
   end
   object cbTauschen5: TCheckBox
     Left = 449
     Top = 152
     Width = 20
     Height = 17
-    TabOrder = 6
+    TabOrder = 5
   end
 end

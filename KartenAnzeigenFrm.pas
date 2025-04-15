@@ -53,6 +53,7 @@ type
     lblGew4: TLabel;
     lblVer5: TLabel;
     lblGew5: TLabel;
+    btnClose: TButton;
   private
     { Private-Deklarationen }
   public

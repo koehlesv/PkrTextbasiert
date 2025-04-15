@@ -68,7 +68,7 @@ object frmSpieldatenFestlegen: TfrmSpieldatenFestlegen
     Caption = '&OK'
     Default = True
     ModalResult = 1
-    TabOrder = 5
+    TabOrder = 6
   end
   object rbAbsteigend: TRadioButton
     Left = 16
@@ -114,7 +114,7 @@ object frmSpieldatenFestlegen: TfrmSpieldatenFestlegen
       'Warnung anzeigen, bevor der Kartentauschdialog angezeigt wird (D' +
       'amit andere Spielende wegschauen k'#246'nnen und so keinen Einblick i' +
       'n die Karten erhalten).'
-    TabOrder = 6
+    TabOrder = 5
     WordWrap = True
   end
 end

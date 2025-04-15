@@ -2,7 +2,7 @@ object frmKartenAnzeigen: TfrmKartenAnzeigen
   Left = 0
   Top = 0
   Caption = 'Karten'#252'bersicht'
-  ClientHeight = 400
+  ClientHeight = 404
   ClientWidth = 789
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -569,5 +569,16 @@ object frmKartenAnzeigen: TfrmKartenAnzeigen
       ParentFont = False
       Visible = False
     end
+  end
+  object btnClose: TButton
+    Left = 643
+    Top = 360
+    Width = 110
+    Height = 25
+    Cancel = True
+    Caption = '&Schlie'#223'en'
+    Default = True
+    ModalResult = 8
+    TabOrder = 5
   end
 end
