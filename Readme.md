@@ -76,6 +76,6 @@ Glücksbasiertes Spielen kann süchtig machen; Infos unter https://www.buwei.de 
 
 b) Der angezeigte Warnhinweis darf in keiner Weise durch Modifikation, Unterdrückung oder sonstige Änderungen verändert, deaktiviert oder entfernt werden. Jede Abweichung von dieser Bedingung bedarf der ausdrücklichen schriftlichen Zustimmung des ursprünglichen Urhebers.
 
-c) Diese zusätzliche Warnhinweis-Pflicht gilt für alle abgeleiteten Werke, unabhängig davon, in welchem Umfang sie die ursprüngliche Software nutzen oder erweitern. Die Anzeigepflicht erstreckt sich auf jede Oberfläche, in der der Nutzer mit der Software interagiert, und muss dauerhaft bestehen, solange das abgeleitete Werk in Betrieb ist.
+c) Diese zusätzliche Warnhinweis-Pflicht gilt für alle abgeleiteten Werke, unabhängig davon, in welchem Umfang sie die ursprüngliche Software nutzen oder erweitern. Die Anzeigepflicht erstreckt sich mindestens auf das Hauptformular oder ein Äquivalent, das mindestens nach jeder Runde sowie vor dem Beginn und nach dem Ende des Spiels sichtbar sein muss.
 
 Jede abgeleitete Software muss diesen Lizenztext enthalten.
