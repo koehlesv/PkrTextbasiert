@@ -78,4 +78,8 @@ b) Der angezeigte Warnhinweis darf in keiner Weise durch Modifikation, Unterdrü
 
 c) Diese zusätzliche Warnhinweis-Pflicht gilt für alle abgeleiteten Werke, unabhängig davon, in welchem Umfang sie die ursprüngliche Software nutzen oder erweitern. Die Anzeigepflicht erstreckt sich mindestens auf das Hauptformular oder ein Äquivalent, das mindestens nach jeder Runde sowie vor dem Beginn und nach dem Ende des Spiels sichtbar sein muss.
 
+## Menschenrechte
+
+Diese Software darf nur in Übereinstimmung mit der internationalen Erklärung der Menschenrechte verwendet werden, wie von der Generalversammlung der Vereinten Nationen am 10. Dezember 1948 beschlossen.
+
 Jede abgeleitete Software muss diesen Lizenztext enthalten.
