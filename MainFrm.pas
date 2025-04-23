@@ -5,11 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Contnrs, Vcl.StdCtrls, System.Actions,
-  Vcl.ActnList, Vcl.ExtCtrls;
+  Vcl.ActnList, Vcl.ExtCtrls, LizenzdialogFrm;
 
 const
   WM_AFTER_SHOW = WM_USER + 300;
   WM_AFTER_CREATE = WM_USER + 301;
+
+  cNameLizenzDatei = 'skPkr.lizenzakzeptiert';
+  cLizenzVersion = '1.0';
 
 type
   TKartenWert = (kwZwei, kwDrei, kwVier, kwFuenf, kwSechs, kwSieben, kwAcht, kwNeun, kwZehn, kwBube, kwDame, kwKoenig, kwAss);
@@ -124,6 +127,7 @@ type
     FMVSpWarAnz: Boolean;
     FDeck: TDeck;
     FPlayerList: TObjectList;
+    function LizenzdateiHatKorrekteVersion(const APath: string): Boolean;
     procedure RundendetailsAnzeigen();
     procedure ErklaerungAnzeigen();
     procedure UpdateControls();
@@ -968,7 +972,29 @@ begin
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);
+var
+  LizenzDateiSchreiben: TStringList;
 begin
+  if (not FileExists(cNameLizenzDatei)) or (not LizenzdateiHatKorrekteVersion(cNameLizenzDatei)) then
+  begin
+    with TfrmLizenzdialog.Create(nil) do
+    begin
+      try
+        if ShowModal <> mrOk then
+          Halt;
+      finally
+        Free;
+      end;
+    end;
+    LizenzDateiSchreiben := TStringList.Create;
+    try
+      LizenzDateiSchreiben.Add(cLizenzVersion);
+      LizenzDateiSchreiben.SaveToFile(cNameLizenzDatei);
+    finally
+      LizenzDateiSchreiben.Free;
+    end;
+  end;
+
   PostMessage(Self.Handle, WM_AFTER_SHOW, 0, 0);
 end;
 
@@ -1097,6 +1123,21 @@ begin
         RemainingList.Free;
       end;
     end;
+  end;
+end;
+
+function TfrmMain.LizenzdateiHatKorrekteVersion(const APath: string): Boolean;
+var
+  LizenzDateiInhalt: TStringList;
+begin
+  if not FileExists(APath) then
+    Exit(False);
+  LizenzDateiInhalt := TStringList.Create();
+  try
+    LizenzDateiInhalt.LoadFromFile(APath);
+    Result := (LizenzDateiInhalt.Count > 0) and (LizenzDateiInhalt[0] = cLizenzVersion);
+  finally
+    LizenzDateiInhalt.Free;
   end;
 end;
 
