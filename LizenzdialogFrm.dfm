@@ -10,6 +10,7 @@ object frmLizenzdialog: TfrmLizenzdialog
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesktopCenter
   OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 15
