@@ -128,16 +128,18 @@
         </DCCReference>
         <DCCReference Include="KartenAnzeigenFrm.pas">
             <Form>frmKartenAnzeigen</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="SpieldatenFestlegenFrm.pas">
             <Form>frmSpieldatenFestlegen</Form>
+        </DCCReference>
+        <DCCReference Include="LizenzdialogFrm.pas">
+            <Form>frmLizenzdialog</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="KartenTauschenFrm.pas">
             <Form>frmKartenTauschen</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="GlobalObjectHolder.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

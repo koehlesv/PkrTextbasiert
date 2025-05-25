@@ -11,6 +11,7 @@ object frmMain: TfrmMain
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 15
@@ -72,7 +73,7 @@ object frmMain: TfrmMain
   object lblTksUebersicht: TLabel
     Left = 443
     Top = 115
-    Width = 86
+    Width = 76
     Height = 15
     Caption = 'Anzahl Tokens'
     Visible = False
@@ -327,6 +328,11 @@ object frmMain: TfrmMain
       Caption = 'Erkl'#228'rung anzeigen'
       ShortCut = 112
       OnExecute = actErklAnzExecute
+    end
+    object actShowLogWindow: TAction
+      Caption = 'Log-Fenster anzeigen'
+      ShortCut = 49228
+      OnExecute = actShowLogWindowExecute
     end
   end
 end

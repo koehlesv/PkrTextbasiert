@@ -8,8 +8,9 @@ uses
   MainFrm in 'MainFrm.pas' {frmMain},
   KartenAnzeigenFrm in 'KartenAnzeigenFrm.pas' {frmKartenAnzeigen},
   SpieldatenFestlegenFrm in 'SpieldatenFestlegenFrm.pas' {frmSpieldatenFestlegen},
+  LizenzdialogFrm in 'LizenzdialogFrm.pas' {frmLizenzdialog},
   KartenTauschenFrm in 'KartenTauschenFrm.pas' {frmKartenTauschen},
-  LizenzdialogFrm in 'LizenzdialogFrm.pas' {frmLizenzdialog};
+  GlobalObjectHolder in 'GlobalObjectHolder.pas';
 
 {$R *.res}
 

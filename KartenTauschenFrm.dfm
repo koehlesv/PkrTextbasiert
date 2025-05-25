@@ -103,6 +103,7 @@ object frmKartenTauschen: TfrmKartenTauschen
     Width = 154
     Height = 25
     Caption = '&Tauschen bzw. Fortsetzen'
+    Default = True
     ModalResult = 1
     TabOrder = 6
   end

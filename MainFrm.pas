@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Contnrs, Vcl.StdCtrls, System.Actions,
-  Vcl.ActnList, Vcl.ExtCtrls, LizenzdialogFrm;
+  Vcl.ActnList, Vcl.ExtCtrls, LizenzdialogFrm, LogFrm;
 
 const
   WM_AFTER_SHOW = WM_USER + 300;
@@ -111,6 +111,7 @@ type
     lblAktPlzSp1: TLabel;
     lblPlatzierung: TLabel;
     btnSpielStoppen: TButton;
+    actShowLogWindow: TAction;
     procedure btnErklClick(Sender: TObject);
     procedure actErklAnzExecute(Sender: TObject);
     procedure btnSpielStartenClick(Sender: TObject);
@@ -118,6 +119,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSpielStoppenClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure actShowLogWindowExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FAnzMeSp: Integer;
@@ -170,7 +173,8 @@ implementation
 
 {$R *.dfm}
 
-uses KartenAnzeigenFrm, SpieldatenFestlegenFrm, KartenTauschenFrm, System.UITypes;
+uses KartenAnzeigenFrm, SpieldatenFestlegenFrm, KartenTauschenFrm, System.UITypes,
+  GlobalObjectHolder;
 
 { TKarte }
 
@@ -794,6 +798,18 @@ begin
   ErklaerungAnzeigen();
 end;
 
+procedure TfrmMain.actShowLogWindowExecute(Sender: TObject);
+begin
+  if GlobalObjectHolder.LogwindowIsShown then
+  begin
+    GlobalObjectHolder.Logwindow.BringToFront;
+    Exit;
+  end;
+  GlobalObjectHolder.Logwindow := TfrmLog.Create(nil);
+  GlobalObjectHolder.Logwindow.Show;
+  GlobalObjectHolder.LogwindowIsShown := True;
+end;
+
 procedure TfrmMain.AfterCreate(var Msg: TMessage);
 begin
 
@@ -856,6 +872,7 @@ end;
 
 procedure TfrmMain.btnNaechsteRundeClick(Sender: TObject);
 begin
+  GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Nächste Runde begonnen.');
   KartenGeben;
   //RundendetailsAnzeigen();
   KartenTauschen();
@@ -914,6 +931,7 @@ begin
   UpdateControls();
   InitTksSpAnzeige();
   UpdateTksAnzeige();
+  GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel gestartet.');
 end;
 
 procedure TfrmMain.btnSpielStoppenClick(Sender: TObject);
@@ -923,6 +941,7 @@ begin
   FPlayerList.Clear;
   FSpielLaufend := False;
   UpdateControls();
+  GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel abgebrochen.');
 end;
 
 constructor TfrmMain.Create(AOwner: TComponent);
@@ -964,6 +983,14 @@ begin
     'Haben mehrere Personen dieselbe gewertete Folge, so wird die höchste Karte der gewerteten Folge verglichen und es gewinnt die Person mit der höchsten ' +
     'Karte (bzw. es verliert diejenige mit der niedrigsten Karte). Bleibt es bei einem Gleichstand, so gewinnen oder verlieren alle Personen mit derselben Wertung.',
     TMsgDlgType.mtInformation, [mbClose], 0);
+end;
+
+procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if LogwindowIsShown then
+  begin
+    LogWindow.Close;
+  end;
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -1024,6 +1051,7 @@ end;
 procedure TfrmMain.KartenTauschen;
 var
   Primaerwert, Sekundaerwert: Integer;
+  LogPrimaerwert, LogSekundaerwert: Integer;
   I: Integer;
   RemainingList, TmpList: TObjectList;
   Ignore: TKartenWert;
@@ -1038,6 +1066,16 @@ begin
       if (FAnzMeSp > 1) and FMVSpWarAnz then
         MessageDlg('Spieler*in ' + IntToStr(AktSpieler.Nummer) + ' sieht als nächstes die Karten.', TMsgDlgType.mtInformation, [mbOK], 0);
       try
+        if GlobalObjectHolder.LogwindowIsShown then
+        begin
+          TDeck.HandBewerten(AKtSpieler.Hand, LogPrimaerwert, LogSekundaerwert);
+          GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Kartenwert Spieler ' + IntToStr(AKtSpieler.Nummer) + ' vor dem Tausch: ' + IntToStr(LogPrimaerwert * 100 + LogSekundaerwert));
+          GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Karten: ' + TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[1] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[2] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[3] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[4] as TKarte));
+        end;
         frmKartenTauschen := TfrmKartenTauschen.Create(nil);
         frmKartenTauschen.SetData(AKtSpieler.Nummer,
           [TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte),
@@ -1064,6 +1102,16 @@ begin
             FDeck.KartenTauschen(TmpList, RemainingList);
             AKtSpieler.Hand := TmpList;
           end;
+          if GlobalObjectHolder.LogwindowIsShown then
+        begin
+          TDeck.HandBewerten(AKtSpieler.Hand, LogPrimaerwert, LogSekundaerwert);
+          GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Kartenwert Spieler ' + IntToStr(AKtSpieler.Nummer) + ' nach dem Tausch: ' + IntToStr(LogPrimaerwert * 100 + LogSekundaerwert));
+          GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Karten: ' + TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[1] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[2] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[3] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[4] as TKarte));
+        end;
         finally
           RemainingList.Free;
         end;
@@ -1073,8 +1121,29 @@ begin
       Continue;
     end;
     TDeck.HandBewerten(AKtSpieler.Hand, Primaerwert, Sekundaerwert);
+    if GlobalObjectHolder.LogwindowIsShown then
+    begin
+      TDeck.HandBewerten(AKtSpieler.Hand, LogPrimaerwert, LogSekundaerwert);
+      GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Kartenwert Spieler ' + IntToStr(AKtSpieler.Nummer) + ' vor dem Tausch: ' + IntToStr(LogPrimaerwert * 100 + LogSekundaerwert));
+      GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Karten: ' + TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[1] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[2] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[3] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[4] as TKarte));
+    end;
     if Primaerwert >= 5 then
+    begin
+      if GlobalObjectHolder.LogwindowIsShown then
+      begin
+        GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Kartenwert Spieler ' + IntToStr(AKtSpieler.Nummer) + ' nach dem Tausch: ' + IntToStr(LogPrimaerwert * 100 + LogSekundaerwert));
+        GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Karten: ' + TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[1] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[2] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[3] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[4] as TKarte));
+      end;
       Continue;
+    end;
     if Primaerwert = 4 then //Three of a kind.
     begin
       RemainingList := TObjectList.Create(False);
@@ -1122,6 +1191,16 @@ begin
       finally
         RemainingList.Free;
       end;
+    end;
+    if GlobalObjectHolder.LogwindowIsShown then
+    begin
+      TDeck.HandBewerten(AKtSpieler.Hand, LogPrimaerwert, LogSekundaerwert);
+      GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Kartenwert Spieler ' + IntToStr(AKtSpieler.Nummer) + ' nach dem Tausch: ' + IntToStr(LogPrimaerwert * 100 + LogSekundaerwert));
+      GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown('Karten: ' + TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[0] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[1] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[2] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[3] as TKarte) + ', ' +
+          TKartenHelper.GetKartenBezeichnung(AKtSpieler.Hand[4] as TKarte));
     end;
   end;
 end;
@@ -1298,6 +1377,7 @@ begin
     UpdateControls();
     SetzePlatzierungNachSpielende();
     MessageDlg('Das Spiel ist beendet; Alle Spieler*innen haben entweder keine Tokens mehr oder den vordefinierten Wert erreicht.', TMsgDlgType.mtInformation, [mbOK], 0);
+    GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel beendet.');
     Exit;
   end;
   if FPlayerList.Count = 1 then
@@ -1306,6 +1386,7 @@ begin
     UpdateControls();
     SetzePlatzierungNachSpielende();
     MessageDlg('Das Spiel ist beendet; Es verbleibt nur ein*e Spieler*in.', TMsgDlgType.mtInformation, [mbOK], 0);
+    GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel beendet.');
     FPlayerList.Clear;
     Exit;
   end;
@@ -1318,6 +1399,7 @@ begin
       begin
         FSpielLaufend := False;
         UpdateControls();
+        GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel beendet.');
       end;
     end
     else
@@ -1326,6 +1408,7 @@ begin
       begin
         FSpielLaufend := False;
         UpdateControls();
+        GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spiel beendet.');
       end;
   end;
 end;
