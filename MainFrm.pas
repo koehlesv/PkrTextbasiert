@@ -13,6 +13,7 @@ const
 
   cNameLizenzDatei = 'skPkr.lizenzakzeptiert';
   cLizenzVersion = '1.0';
+  cHashFillText = 'erstellt mit Object Pascal';
 
 type
   TKartenWert = (kwZwei, kwDrei, kwVier, kwFuenf, kwSechs, kwSieben, kwAcht, kwNeun, kwZehn, kwBube, kwDame, kwKoenig, kwAss);
@@ -112,6 +113,10 @@ type
     lblPlatzierung: TLabel;
     btnSpielStoppen: TButton;
     actShowLogWindow: TAction;
+    actSaveCurrentGamestate: TAction;
+    actLoadOldGamestate: TAction;
+    btnLadeOdSpeichereZws: TButton;
+    btnSchliessen: TButton;
     procedure btnErklClick(Sender: TObject);
     procedure actErklAnzExecute(Sender: TObject);
     procedure btnSpielStartenClick(Sender: TObject);
@@ -121,6 +126,10 @@ type
     procedure btnSpielStoppenClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actShowLogWindowExecute(Sender: TObject);
+    procedure actSaveCurrentGamestateExecute(Sender: TObject);
+    procedure actLoadOldGamestateExecute(Sender: TObject);
+    procedure btnLadeOdSpeichereZwsClick(Sender: TObject);
+    procedure btnSchliessenClick(Sender: TObject);
   private
     { Private-Deklarationen }
     FAnzMeSp: Integer;
@@ -138,6 +147,8 @@ type
     procedure UpdateTksAnzeige();
     procedure SetzePlatzierung(ABereitsPlatzierungAngepasst: Boolean; ASpieler: Byte);
     procedure SetzePlatzierungNachSpielende();
+    procedure SpeichereZwischenstand();
+    procedure LadeZwischenstand();
     procedure AfterShow(var Msg: TMessage); message WM_AFTER_SHOW;
     procedure AfterCreate(var Msg: TMessage); message WM_AFTER_CREATE;
    //protected
@@ -174,7 +185,7 @@ implementation
 {$R *.dfm}
 
 uses KartenAnzeigenFrm, SpieldatenFestlegenFrm, KartenTauschenFrm, System.UITypes,
-  GlobalObjectHolder;
+  GlobalObjectHolder, System.Hash;
 
 { TKarte }
 
@@ -798,6 +809,16 @@ begin
   ErklaerungAnzeigen();
 end;
 
+procedure TfrmMain.actLoadOldGamestateExecute(Sender: TObject);
+begin
+  LadeZwischenstand();
+end;
+
+procedure TfrmMain.actSaveCurrentGamestateExecute(Sender: TObject);
+begin
+  SpeichereZwischenstand();
+end;
+
 procedure TfrmMain.actShowLogWindowExecute(Sender: TObject);
 begin
   if GlobalObjectHolder.LogwindowIsShown then
@@ -870,6 +891,14 @@ begin
   ErklaerungAnzeigen();
 end;
 
+procedure TfrmMain.btnLadeOdSpeichereZwsClick(Sender: TObject);
+begin
+  if FSpielLaufend then
+    SpeichereZwischenstand()
+  else
+    LadeZwischenstand();
+end;
+
 procedure TfrmMain.btnNaechsteRundeClick(Sender: TObject);
 begin
   GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Nächste Runde begonnen.');
@@ -879,6 +908,11 @@ begin
   RundendetailsAnzeigen();
   UpdateTksAnzeige();
   SpielendeNachTksEntfernen();
+end;
+
+procedure TfrmMain.btnSchliessenClick(Sender: TObject);
+begin
+  Self.Close;
 end;
 
 procedure TfrmMain.btnSpielStartenClick(Sender: TObject);
@@ -1205,6 +1239,74 @@ begin
   end;
 end;
 
+procedure TfrmMain.LadeZwischenstand;
+var
+  Spieldaten: TStringList;
+  AktSpielerCharakteristik: TStringList;
+  OpenDialogue: TOpenDialog;
+  Pruefsumme: string;
+  I: Integer;
+begin
+  if FSpielLaufend then
+  begin
+    MessageDlg('Ein Spielstand kann nur dann geladen werden, wenn derzeit kein Spiel aktiv ist.', TMsgDlgType.mtError, [mbClose], 0);
+    Exit;
+  end;
+  Spieldaten := TStringList.Create;
+  AktSpielerCharakteristik := TStringList.Create;
+  try
+    OpenDialogue := TOpenDialog.Create(nil);
+    try
+      OpenDialogue.Options := OpenDialogue.Options + [ofOldStyleDialog];
+      OpenDialogue.Filter := 'Poker-Zwischenspielstand (*.pzs)|*.pzs|Textdatei (*.txt)|*.txt|Alle Dateien (*.*)|*.*';
+      OpenDialogue.Title := 'Zwischenspielstand laden';
+      OpenDialogue.InitialDir := GetCurrentDir;
+      OpenDialogue.DefaultExt := 'pzs';
+      OpenDialogue.FilterIndex := 1;
+      if OpenDialogue.Execute() then
+      begin
+        Spieldaten.LoadFromFile(OpenDialogue.FileName);
+        if Spieldaten.Count = 0 then
+        begin
+          MessageDlg('Die ausgewählte Datei enthält keine Daten.', TMsgDlgType.mtError, [mbClose], 0);
+          Exit;
+        end;
+        Pruefsumme := Spieldaten[Spieldaten.Count - 1];
+        Spieldaten.Delete(Spieldaten.Count - 1);
+        if not SameText(Pruefsumme, THashSHA2.GetHashString(Spieldaten.CommaText + cHashFillText)) then
+        begin
+          MessageDlg('Prüfziffer fehlerhaft oder Dateiformat falsch; Die Daten können nicht geladen werden.', TMsgDlgType.mtError, [mbClose], 0);
+          Exit;
+        end;
+        AktNummer := 0;
+        //AktNummer := StrToInt(Spieldaten[0]);
+        AktPlatzierung := StrToInt(Spieldaten[1]);
+        FAnzMeSp := StrToInt(Spieldaten[2]);
+        //FPlayerList.Count - FAnzMeS := StrToInt(Spieldaten[3]);
+        FSpielartAbsteigend := StrToBool(Spieldaten[4]);
+        FAnzTks := StrToInt(Spieldaten[5]);
+        FMVSpWarAnz := StrToBool(Spieldaten[6]);
+        for I := 7 to Spieldaten.Count - 1 do
+        begin
+          AktSpielerCharakteristik.CommaText := Spieldaten[I];
+          FPlayerList.Add(TPlayer.Create(StrToBool(Trim(AktSpielerCharakteristik[2])), StrToInt(AktSpielerCharakteristik[1])));
+        end;
+        InitializeDeck();
+        FSpielLaufend := True;
+        UpdateControls();
+        InitTksSpAnzeige();
+        UpdateTksAnzeige();
+        GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spieldaten geladen (aus Datei).');
+      end;
+    finally
+      OpenDialogue.Free;
+    end;
+  finally
+    AktSpielerCharakteristik.Free;
+    Spieldaten.Free;
+  end;
+end;
+
 function TfrmMain.LizenzdateiHatKorrekteVersion(const APath: string): Boolean;
 var
   LizenzDateiInhalt: TStringList;
@@ -1336,6 +1438,54 @@ begin
 
 end;
 
+procedure TfrmMain.SpeichereZwischenstand;
+var
+  Spieldaten: TStringList;
+  Spieler: TPlayer;
+  Speicherdialog: TSaveDialog;
+  I: Integer;
+begin
+  if FSpielLaufend then
+  begin
+    Spieldaten := TStringList.Create;
+    try
+      Spieldaten.Add(IntToStr(AktNummer));
+      Spieldaten.Add(IntToStr(AktPlatzierung));
+      Spieldaten.Add(IntToStr(FAnzMeSp));
+      Spieldaten.Add(IntToStr(FPlayerList.Count - FAnzMeSp));
+      Spieldaten.Add(BoolToStr(FSpielartAbsteigend));
+      Spieldaten.Add(IntToStr(FAnzTks));
+      Spieldaten.Add(BoolToStr(FMVSpWarAnz));
+      for I := 0 to FPlayerList.Count - 1 do
+      begin
+        Spieler := (FPlayerList[I] as TPlayer);
+        Spieldaten.Add(IntToStr(Spieler.Nummer) + ', ' + IntToStr(Spieler.TksAnz) + ', ' + BoolToStr(Spieler.MenschlicherSpieler));
+      end;
+      Spieldaten.Add(THashSHA2.GetHashString(Spieldaten.CommaText + cHashFillText));
+      Speicherdialog:= TSaveDialog.Create(nil);
+      try
+        Speicherdialog.Options := Speicherdialog.Options + [ofOverwritePrompt, ofOldStyleDialog];
+        Speicherdialog.Filter := 'Poker-Zwischenspielstand (*.pzs)|*.pzs|Textdatei (*.txt)|*.txt|Alle Dateien (*.*)|*.*';
+        Speicherdialog.Title := 'Zwischenspielstand speichern';
+        Speicherdialog.InitialDir := GetCurrentDir;
+        Speicherdialog.DefaultExt := 'pzs';
+        Speicherdialog.FilterIndex := 1;
+        if Speicherdialog.Execute() then
+        begin
+          Spieldaten.SaveToFile(Speicherdialog.FileName);
+          GlobalObjectHolder.TLogwindowVerwalter.AddLogtextIfShown(DateTimeToStr(Now) + ': Spieldaten gespeichert (in Datei).');
+        end;
+      finally
+        Speicherdialog.Free;
+      end;
+    finally
+      Spieldaten.Free;
+    end;
+  end
+  else
+    MessageDlg('Derzeit läuft kein Spiel; EIne Speicherung ist daher nicht möglich.', TMsgDlgType.mtError, [mbClose], 0);
+end;
+
 procedure TfrmMain.SpielendeNachTksEntfernen;
 var
   I: Integer;
@@ -1420,12 +1570,14 @@ begin
     btnSpielStarten.Enabled := False;
     btnSpielStoppen.Enabled := True;
     btnNaechsteRunde.Enabled := True;
+    btnLadeOdSpeichereZws.Caption := '&Zwischenst. speichern...';
   end
   else
   begin
     btnSpielStarten.Enabled := True;
     btnSpielStoppen.Enabled := False;
     btnNaechsteRunde.Enabled := False;
+    btnLadeOdSpeichereZws.Caption := '&Zwischenst. laden...';
   end;
 end;
 

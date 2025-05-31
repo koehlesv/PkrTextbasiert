@@ -2,7 +2,7 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'Poker'
-  ClientHeight = 441
+  ClientHeight = 422
   ClientWidth = 624
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -87,9 +87,9 @@ object frmMain: TfrmMain
     Visible = False
   end
   object btnNaechsteRunde: TButton
-    Left = 490
-    Top = 352
-    Width = 97
+    Left = 483
+    Top = 336
+    Width = 104
     Height = 25
     Caption = '&N'#228'chste Runde'
     Default = True
@@ -103,15 +103,15 @@ object frmMain: TfrmMain
     Width = 89
     Height = 25
     Caption = '&? - Spielprinzip'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btnErklClick
   end
   object btnSpielStarten: TButton
     Left = 8
-    Top = 352
-    Width = 89
+    Top = 344
+    Width = 104
     Height = 25
-    Caption = '&Spiel beginnen'
+    Caption = '&Spiel beginnen...'
     TabOrder = 0
     OnClick = btnSpielStartenClick
   end
@@ -121,7 +121,7 @@ object frmMain: TfrmMain
     Width = 65
     Height = 145
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 5
     object lblSp1: TLabel
       AlignWithMargins = True
       Left = 3
@@ -190,7 +190,7 @@ object frmMain: TfrmMain
     Width = 32
     Height = 145
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 6
     object lblTksSp1: TLabel
       AlignWithMargins = True
       Left = 3
@@ -258,7 +258,7 @@ object frmMain: TfrmMain
     Width = 20
     Height = 145
     BevelOuter = bvNone
-    TabOrder = 6
+    TabOrder = 7
     object lblAktPlzSp5: TLabel
       AlignWithMargins = True
       Left = 3
@@ -312,14 +312,34 @@ object frmMain: TfrmMain
   end
   object btnSpielStoppen: TButton
     Left = 128
-    Top = 352
-    Width = 89
+    Top = 344
+    Width = 104
     Height = 25
     Cancel = True
     Caption = 'S&piel beenden'
     Enabled = False
     TabOrder = 1
     OnClick = btnSpielStoppenClick
+  end
+  object btnLadeOdSpeichereZws: TButton
+    Left = 224
+    Top = 8
+    Width = 147
+    Height = 25
+    Caption = '&Zwischenst. laden...'
+    TabOrder = 8
+    OnClick = btnLadeOdSpeichereZwsClick
+  end
+  object btnSchliessen: TButton
+    Left = 483
+    Top = 376
+    Width = 104
+    Height = 25
+    Cancel = True
+    Caption = '&Fenster schlie'#223'en'
+    ModalResult = 8
+    TabOrder = 3
+    OnClick = btnSchliessenClick
   end
   object ActionList1: TActionList
     Left = 584
@@ -333,6 +353,16 @@ object frmMain: TfrmMain
       Caption = 'Log-Fenster anzeigen'
       ShortCut = 49228
       OnExecute = actShowLogWindowExecute
+    end
+    object actSaveCurrentGamestate: TAction
+      Caption = 'actSaveCurrentGamestate'
+      ShortCut = 49235
+      OnExecute = actSaveCurrentGamestateExecute
+    end
+    object actLoadOldGamestate: TAction
+      Caption = 'Alten Spielstand laden'
+      ShortCut = 49223
+      OnExecute = actLoadOldGamestateExecute
     end
   end
 end
