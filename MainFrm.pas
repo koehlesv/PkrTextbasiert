@@ -840,7 +840,7 @@ procedure TfrmMain.AfterShow(var Msg: TMessage);
 begin
   MessageDlg('Poker ist ein rundenbasiertes Spiel, bei welchem der Erfolg in hohem Maße vom Zufall abhängt. Mit diesem Programm darf nicht um Geld oder andere Wertgegenstände gespielt werden.' + sLineBreak +
     'Glücksbasiertes Spielen kann süchtig machen; Infos unter https://www.buwei.de - kostenfrei und anonym.' + sLineBreak + 'Alle Mitspieler*innen sind vor Spielbeginn darauf hinzuweisen.',
-    TMsgDlgType.mtWarning, [mbOK], 0);
+    TMsgDlgType.mtWarning, [mbOK], 0, mbOk);
 end;
 
 procedure TfrmMain.Bewerten(out AMindestSpielerListe: TObjectList; out AHoechstSpielerListe: TObjectList; ATksAnwenden: Boolean);
